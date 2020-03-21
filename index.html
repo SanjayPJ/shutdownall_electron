@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+
+    <script>
+      const fetch = require('node-fetch');
+        var cmd = require('node-command-line');
+
+        function refreshData() {
+          x = 5;  // 5 Seconds
+
+          fetch('https://sanjaypj.github.io/shutdownTrigger')
+            .then(res => res.text())
+            .then(body => {
+              var res = JSON.parse(body);
+              var is_shutdown = (res[0].trigger);
+              console.log(`get value is -> ${is_shutdown}`)
+              is_shutdown = parseInt(is_shutdown)
+              if (is_shutdown) {
+                console.log('Ready to shutdown');
+                cmd.run('shutdown -f -t 00 -s');
+              } else {
+                console.log('Waiting for shutdown signal...');
+              }
+            });
+
+          setTimeout(refreshData, x * 1000);
+        }
+
+
+        refreshData(); // execute function
+      
+      </script>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+  </body>
+</html>
